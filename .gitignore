@@ -1,0 +1,16 @@
+# Secrets and local settings - never commit
+.env
+.env.*
+*.pem
+*.key
+.htpasswd
+
+# Windows / Mac clutter
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Tool folders
+node_modules/
+.vscode/
+.claude/settings.local.json
