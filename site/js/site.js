@@ -5,8 +5,8 @@
   const initials = ['MO','JS','LH','ST','OO','RB','KG','IS','GB','SI','AM','PT','CW','DN','EF','HV','NB','RK','TL','YA','BW','JM','LP','FC','AD','QE','VR','MZ','SH','KO','WD','EP','GL','CN','RT','UB','HJ'];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Swarm avatars (17 Nov): Inner Hive founders at the centre, example heroes around them
-  const coreImgs = ["img/avatars/core-1.jpg", "img/avatars/core-2.jpg", "img/avatars/core-3.jpg", "img/avatars/core-4.jpg", "img/avatars/core-5.jpg", "img/avatars/core-6.jpg", "img/avatars/core-7.jpg"].map(src => { const im = new Image(); im.src = src; return im; });
-  const fillImgs = ["img/avatars/member-1.jpg", "img/avatars/member-2.jpg", "img/avatars/member-3.jpg", "img/avatars/member-4.jpg", "img/avatars/member-5.jpg", "img/avatars/member-6.jpg", "img/avatars/member-7.jpg", "img/avatars/member-8.jpg", "img/avatars/member-9.jpg", "img/avatars/member-10.jpg", "img/avatars/member-11.jpg"].map(src => { const im = new Image(); im.src = src; return im; });
+  const coreImgs = ["/img/avatars/core-1.jpg", "/img/avatars/core-2.jpg", "/img/avatars/core-3.jpg", "/img/avatars/core-4.jpg", "/img/avatars/core-5.jpg", "/img/avatars/core-6.jpg", "/img/avatars/core-7.jpg"].map(src => { const im = new Image(); im.src = src; return im; });
+  const fillImgs = ["/img/avatars/member-1.jpg", "/img/avatars/member-2.jpg", "/img/avatars/member-3.jpg", "/img/avatars/member-4.jpg", "/img/avatars/member-5.jpg", "/img/avatars/member-6.jpg", "/img/avatars/member-7.jpg", "/img/avatars/member-8.jpg", "/img/avatars/member-9.jpg", "/img/avatars/member-10.jpg", "/img/avatars/member-11.jpg"].map(src => { const im = new Image(); im.src = src; return im; });
   const avatarFor = (i, proj) => { if (proj) { if (i===0) return null; if (i<=6) return {img:coreImgs[i],core:true}; if (i===7) return {img:coreImgs[0],core:true}; return {img:fillImgs[((i-8)*4)%fillImgs.length],core:false}; } if (i<=6) return {img:coreImgs[i],core:true}; return {img:fillImgs[((i-7)*4)%fillImgs.length],core:false}; };
 
   // ---------- Swarm ----------
@@ -110,8 +110,11 @@
     io.observe(canvas);
     return { replay(){ start=null; size(); if(!reduce && !raf && canvas.offsetParent){ visible=true; raf=requestAnimationFrame(loop);} } };
   }
-  const s1=swarm(document.getElementById('swarm'),{hover:true,anchor:document.querySelector('[data-page="home"] .swarm-panel')});
-  const s2=swarm(document.getElementById('swarm2'),{centerProject:true,anchor:document.querySelector('[data-page="project"] .swarm-panel')});
+  // Each page only has the parts it needs, so every feature checks its element exists first
+  const byId=id=>document.getElementById(id);
+  const fill=(id,html)=>{ const el=byId(id); if(el) el.innerHTML=html; return el; };
+  if(byId('swarm')) swarm(byId('swarm'),{hover:true,anchor:document.querySelector('[data-page="home"] .swarm-panel')});
+  if(byId('swarm2')) swarm(byId('swarm2'),{centerProject:true,anchor:document.querySelector('[data-page="project"] .swarm-panel')});
 
   // ---------- Ribbon ----------
   
@@ -178,10 +181,10 @@
       <div class="roles">${c.roles}</div>
     </article>`;
   }
-  document.getElementById('homeCases').innerHTML=[cases[2],cases[0],cases[1]].map(c=>card(c,true)).join('');
-  document.getElementById('projCases').innerHTML=[cases[0],cases[3],cases[4]].map(c=>card(c,true)).join('');
-  const all=document.getElementById('allCases'); all.innerHTML=cases.map(c=>card(c,false)).join('');
-  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+  fill('homeCases',[cases[2],cases[0],cases[1]].map(c=>card(c,true)).join(''));
+  fill('projCases',[cases[0],cases[3],cases[4]].map(c=>card(c,true)).join(''));
+  const all=fill('allCases',cases.map(c=>card(c,false)).join(''));
+  if(all) document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
     const f=b.dataset.f;
     all.querySelectorAll('.case').forEach(el=>{ el.hidden = !(f==='all'||el.dataset.type===f||el.dataset.scale===f); });
@@ -201,35 +204,21 @@
     ['Deliver','The team gets it done','You deal with the lead throughout. Then an honest retrospective.']
   ];
   const j=(arr,ex,grow)=>arr.map((s,i)=>`<div class="step"><div class="hex"${grow?' tabindex="0"':''}>${i+1}</div><small>Step ${i+1}</small><h3>${s[0]}</h3><p class="muted">${s[1]}.</p>${ex?`<p class="ex">${s[2]}</p>`:''}</div>`).join('');
-  document.getElementById('homeJourney').innerHTML=j(steps,false,true);
-  document.getElementById('howJourney').innerHTML=j(steps,true,true);
-  document.getElementById('projJourney').innerHTML=j(projSteps,true);
+  fill('homeJourney',j(steps,false,true));
+  fill('howJourney',j(steps,true,true));
+  fill('projJourney',j(projSteps,true));
 
-  // ---------- Router ----------
-  const pages=[...document.querySelectorAll('[data-page]')];
-  const navLinks=[...document.querySelectorAll('nav.main a')];
-  const nav=document.getElementById('mainNav'), menuBtn=document.getElementById('menuBtn');
-  function route(){
-    let h=(location.hash||'#home').slice(1);
-    let anchor=null;
-    if(h==='brief'){anchor='brief';h='project';}
-    if(h==='onboard'){anchor='onboard';h='join';}
-    if(!pages.some(p=>p.dataset.page===h)) h='home';
-    pages.forEach(p=>p.classList.toggle('on',p.dataset.page===h));
-    navLinks.forEach(a=>{ if(a.getAttribute('href')==='#'+h) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
-    nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false');
-    if(anchor){ document.getElementById(anchor).scrollIntoView({behavior:reduce?'auto':'smooth'}); }
-    else window.scrollTo(0,0);
-    document.querySelector('section.cta').hidden=(h==='how');
-    if(h==='home') s1.replay(); if(h==='project') s2.replay();
-  }
-  addEventListener('hashchange',route); route();
+  // ---------- Mobile menu ----------
+  // (Each page is now its own file, so the old page-switching script is gone;
+  //  the server marks the current nav link with aria-current.)
+  const nav=byId('mainNav'), menuBtn=byId('menuBtn');
   menuBtn.addEventListener('click',()=>{ const o=nav.classList.toggle('open'); menuBtn.setAttribute('aria-expanded',o); });
 
   // ---------- Forms ----------
   // V3: mock onboarding calendar (next five working days, four slots each)
   (function(){
     const box=document.getElementById('slots'), book=document.getElementById('slotBook'), done=document.getElementById('slotDone');
+    if(!box) return;
     const times=['09:30','11:00','14:00','16:30']; let d=new Date(); d.setHours(12,0,0,0); let days=[];
     while(days.length<5){ d=new Date(d.getTime()+864e5); if(d.getDay()%6) days.push(new Date(d)); }
     const fmt=x=>x.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -240,6 +229,7 @@
   })();
   function wire(formId,errId,doneId){
     const f=document.getElementById(formId);
+    if(!f) return;
     f.addEventListener('submit',e=>{
       e.preventDefault();
       const bad=[...f.querySelectorAll('[required]')].filter(i=>!i.value.trim() || (i.type==='email' && !/^\S+@\S+\.\S+$/.test(i.value)));

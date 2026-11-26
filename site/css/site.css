@@ -70,9 +70,6 @@ nav.main .btn{padding:10px 16px;font-size:.92rem;color:var(--pollen-ink)}
   nav.main a{padding:12px}
 }
 
-/* Pages */
-[data-page]{display:none}
-[data-page].on{display:block}
 
 /* Hero */
 .hero{padding-block:clamp(36px,6vw,72px) clamp(48px,7vw,88px)}
@@ -262,3 +259,6 @@ body.review [data-note]::before{content:attr(data-note);position:absolute;z-inde
 .gn-close{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));z-index:91;background:var(--paper);color:var(--ink);border:none;border-radius:999px;padding:10px 18px;font:600 .95rem var(--body);cursor:pointer}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-reduced-motion:reduce){.ribbon .track{animation:none}.btn{transition:none}}
+
+/* In-page jumps (e.g. "Describe your project") scroll smoothly, as the old page switcher did */
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
