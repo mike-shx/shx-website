@@ -1,0 +1,13 @@
+# Store and check out text files with LF line endings on every computer.
+# This stops Git's "LF will be replaced by CRLF" warnings on Windows.
+* text=auto eol=lf
+
+# Images and documents are binary: never change their bytes
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.docx binary
