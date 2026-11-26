@@ -6,9 +6,11 @@ Live: https://skillshivex.co.uk · Staging (password-protected): https://staging
 
 ## How the repo is laid out
 - `site/` – everything that goes on the web. Only this folder is uploaded to the hosting.
-- `site/index.html` – the home page.
-- `.github/workflows/` – the automatic uploads to ICUK hosting. Don't change these without Mike's OK.
-- `CLAUDE.md`, `README.md`, `.gitignore` – repo files, never uploaded.
+- `site/index.php` – the home page. Each other page is a folder with its own `index.php`: `project/`, `join/`, `how-it-works/`, `case-studies/`, `our-story/` (addresses like `/project/`).
+- `site/includes/header.php` and `site/includes/footer.php` – the shared header and footer, pulled into every page with PHP. Each page sets `$page` and `$title` first.
+- `site/css/site.css`, `site/js/site.js`, `site/img/` – shared styles, script and images. Use root-relative paths (`/img/…`).
+- `.github/workflows/deploy-staging.yml` – the automatic upload of `site/` to ICUK staging. There is no live-site deploy yet. Staging uses plain FTP (ICUK doesn't support FTPS); the upload method is waiting on an ICUK ticket. Don't change workflows without Mike's OK.
+- `CLAUDE.md`, `README.md`, `.gitignore`, `.gitattributes` – repo files, never uploaded.
 
 ## Branches and publishing (most important)
 - Always work on the `staging` branch. Never commit to or push `main`.
@@ -34,9 +36,10 @@ SHX sounds like a practical, generous collaborator: human, useful, curious and q
 - UK English spelling.
 
 ## Known issues to fix before go-live
-1. The forms don't send anything. Where submissions should go is still being decided, so ask Mike.
-2. The booking calendar is a mock. Replace it with a real booking link or embed, or remove it for V1. Ask Mike.
+1. The forms don't send anything. Agreed for V1: submissions go through Google Workspace into a Google Sheet, with email alerts.
+2. The booking calendar is a mock. Agreed for V1: replace it with a Google Calendar appointment schedule.
 3. The review notes are visible to visitors. Remove them from the public page.
+4. The case studies are fictitious placeholders. Agreed for V1: replace them with the standardised case studies.
 
 ## Working style
 - If a request is unclear, ask one short question before changing things.
